@@ -1,67 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { getTrips, updateTrip } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { getTrips, updateTrip } from "../services/api";
+import { toast } from "react-toastify";
+import { useParams, useNavigate } from "react-router-dom";
 
-const EditProductPage = ({ productId, onProductUpdated }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
+const EditProductPage = () => {
+  const { id } = useParams();
+  const [tripData, setTripData] = useState({
+    tripName: "",
+    time: "",
+    avatar: "",
+    days: "",
+    price: "",
+  });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchTrip = async () => {
       try {
-        const products = await getTrips();
-        const product = products.find((p) => p.id === productId);
-        if (product) {
-          setTitle(product.title);
-          setDescription(product.description);
-          setPrice(product.price);
+        const trips = await getTrips();
+        const trip = trips.find((t) => t.id === parseInt(id, 10));
+        if (trip) {
+          setTripData(trip);
+        } else {
+          toast.error("Trip not found.");
+          navigate("/products");
         }
       } catch (error) {
-        console.error('Lỗi khi lấy thông tin sản phẩm', error);
+        toast.error("Failed to load trip details.");
       }
     };
-    fetchProduct();
-  }, [productId]);
+
+    fetchTrip();
+  }, [id, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTripData({ ...tripData, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedTrip = { title, description, price };
-
     try {
-      await updateTrip(productId, updatedTrip);
-      alert('Sửa sản phẩm thành công!');
-      onProductUpdated(); // Gọi lại để refresh danh sách sản phẩm
+      await updateTrip(id, tripData);
+      toast.success("Trip updated successfully!");
+      navigate("/products");
     } catch (error) {
-      console.error('Lỗi khi sửa sản phẩm', error);
-      alert('Sửa sản phẩm thất bại!');
+      toast.error("Failed to update trip.");
     }
   };
 
+  if (!tripData) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div>
-      <h2>Sửa sản phẩm</h2>
+    <div className="edit-product">
+      <h2>Edit Trip</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Tên sản phẩm"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          name="tripName"
+          value={tripData.tripName || ""}
+          onChange={handleChange}
           required
         />
-        <textarea
-          placeholder="Mô tả sản phẩm"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+        <input
+          type="text"
+          name="time"
+          value={tripData.time || ""}
+          onChange={handleChange}
           required
-        ></textarea>
+        />
+        <input
+          type="text"
+          name="avatar"
+          value={tripData.avatar || ""}
+          onChange={handleChange}
+        />
         <input
           type="number"
-          placeholder="Giá sản phẩm"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
+          name="days"
+          value={tripData.days || ""}
+          onChange={handleChange}
         />
-        <button type="submit">Lưu</button>
+        <input
+          type="number"
+          name="price"
+          value={tripData.price || ""}
+          onChange={handleChange}
+        />
+        <button type="submit" className="btn btn-warning">
+          Update Trip
+        </button>
       </form>
     </div>
   );

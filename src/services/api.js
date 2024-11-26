@@ -34,9 +34,9 @@ export const getTrips = async () => {
 export const getTripById = async (id) => {
   try {
     const response = await api.get(`/trips/${id}`);
-    return response.data;
+    return response.data; // Đảm bảo API trả về dữ liệu đúng định dạng
   } catch (error) {
-    console.error('Error fetching trip by id', error);
+    console.error("Error fetching trip by ID:", error);
     throw error;
   }
 };

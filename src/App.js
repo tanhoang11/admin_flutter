@@ -11,8 +11,10 @@ import LogoutPage from "./pages/LogoutPage";
 import Navbar from "./components/Navbar";
 import AddProductPage from "./pages/AddProductPage";
 import EditProductPage from "./pages/EditProductPage";
-import './style.css';
-import './products.css';
+
+import "./style.css";
+import "./products.css";
+import "./login.css";
 
 
 const App = () => {
@@ -24,10 +26,30 @@ const App = () => {
     setIsAuthenticated(true);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("authToken"); // Xóa token
+    setIsAuthenticated(false); // Cập nhật trạng thái
+  };
+
   return (
     <Router>
-      {isAuthenticated && <Navbar isAuthenticated={isAuthenticated} />}
+      {/* Hiển thị Navbar nếu người dùng đã đăng nhập */}
+      {isAuthenticated && (
+        <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      )}
       <Routes>
+        {/* Trang mặc định: Login */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/products" />
+            ) : (
+              <LoginPage onLoginSuccess={handleLoginSuccess} />
+            )
+          }
+        />
+        {/* Trang Login */}
         <Route
           path="/login"
           element={
@@ -38,21 +60,29 @@ const App = () => {
             )
           }
         />
+        {/* Trang Products */}
         <Route
           path="/products"
+          element={isAuthenticated ? <ProductsPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/edit-product/:id"
           element={
-            isAuthenticated ? <ProductsPage /> : <Navigate to="/login" />
+            isAuthenticated ? <EditProductPage /> : <Navigate to="/login" />
           }
         />
         <Route
-          path="/products"
+          path="/add-product"
           element={
-            isAuthenticated ? <ProductsPage /> : <Navigate to="/login" />
+            isAuthenticated ? <AddProductPage /> : <Navigate to="/login" />
           }
         />
-        <Route path="/add-product" element={<AddProductPage />} />
-        <Route path="/edit-product/:id" element={<EditProductPage />} />
-        <Route path="/logout" element={<LogoutPage />} />
+        {/* Trang Logout */}
+        <Route
+          path="/logout"
+          element={<LogoutPage onLogout={handleLogout} />}
+        />
+        <Route path="*" element={<Navigate to="/login" />} />{" "}
       </Routes>
     </Router>
   );
