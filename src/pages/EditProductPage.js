@@ -23,7 +23,6 @@ const EditProductPage = () => {
           setTripData(trip);
         } else {
           toast.error("Trip not found.");
-          navigate("/products");
         }
       } catch (error) {
         toast.error("Failed to load trip details.");

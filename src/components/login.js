@@ -19,12 +19,15 @@ const Login = ({ onLoginSuccess }) => {
     }
   };
 
-  return (
+  return (   
     <div className="form_container">
     <div className="container">
       {/* Logo hoặc ảnh đại diện */}
       <img src="https://example.com/your-logo.jpg" alt="Logo" />
       <h2>Login</h2>
+      <p>email: hoang1108@gmail.com</p>
+      <p>pass: password123</p>
+
       <form onSubmit={handleLogin}>
         <input
           type="email"
