@@ -42,7 +42,7 @@ const AddProductPage = () => {
           required
         />
         <input
-          type="text"
+          type="datetime-local"
           name="time"
           placeholder="Time"
           value={tripData.time}
@@ -55,6 +55,7 @@ const AddProductPage = () => {
           placeholder="Image URL"
           value={tripData.avatar}
           onChange={handleChange}
+          required
         />
         <input
           type="number"
@@ -62,6 +63,7 @@ const AddProductPage = () => {
           placeholder="Days"
           value={tripData.days}
           onChange={handleChange}
+          required
         />
         <input
           type="number"
@@ -69,6 +71,7 @@ const AddProductPage = () => {
           placeholder="Price"
           value={tripData.price}
           onChange={handleChange}
+          required
         />
         <button type="submit" className="btn btn-primary">
           Add Trip

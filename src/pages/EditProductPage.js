@@ -1,36 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { getTrips, updateTrip } from "../services/api";
+import { getTripById, updateTrip } from "../services/api";
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
 
 const EditProductPage = () => {
   const { id } = useParams();
-  const [tripData, setTripData] = useState({
-    tripName: "",
-    time: "",
-    avatar: "",
-    days: "",
-    price: "",
-  });
+  const [tripData, setTripData] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTrip = async () => {
       try {
-        const trips = await getTrips();
-        const trip = trips.find((t) => t.id === parseInt(id, 10));
-        if (trip) {
-          setTripData(trip);
-        } else {
-          toast.error("Trip not found.");
-        }
+        const trip = await getTripById(id);
+        setTripData(trip);
       } catch (error) {
         toast.error("Failed to load trip details.");
       }
     };
-
     fetchTrip();
-  }, [id, navigate]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,9 +36,7 @@ const EditProductPage = () => {
     }
   };
 
-  if (!tripData) {
-    return <div>Loading...</div>;
-  }
+  if (!tripData) return <div>Loading...</div>;
 
   return (
     <div className="edit-product">
@@ -64,7 +50,7 @@ const EditProductPage = () => {
           required
         />
         <input
-          type="text"
+          type="datetime-local"
           name="time"
           value={tripData.time || ""}
           onChange={handleChange}

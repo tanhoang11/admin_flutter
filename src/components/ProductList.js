@@ -18,23 +18,20 @@ const ProductList = () => {
         setLoading(false);
       }
     };
-
     fetchTrips();
   }, []);
 
   const handleDelete = async (tripId) => {
     try {
       await deleteTrip(tripId); // Gọi API xóa chuyến đi
-      setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId)); // Cập nhật lại danh sách chuyến đi
+      setTrips((prevTrips) => prevTrips.filter((trip) => trip._id !== tripId)); // Cập nhật lại danh sách chuyến đi
       toast.success("Trip deleted successfully");
     } catch (error) {
       toast.error("Failed to delete trip");
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="products">
@@ -47,28 +44,26 @@ const ProductList = () => {
       ) : (
         <div className="product-grid">
           {trips.map((trip) => (
-            <div key={trip.id} className="product-card">
+            <div key={trip._id} className="product-card">
               <h3>{trip.tripName}</h3>
-              <p>{trip.time}</p>
-              <p>{trip.updateAt}</p>
+              <p>{new Date(trip.time).toLocaleString()}</p>
               <img
                 src={trip.avatar}
                 alt={trip.tripName}
-                style={{ width: "400px" }}
+                style={{ width: "500px" }}
               />
               <p>
-                <strong>Day: {trip.days}</strong>
+                <strong>Days:</strong> {trip.days}
               </p>
-
               <p>
                 <strong>Price:</strong> {trip.price} USD
               </p>
               <div>
-                <Link to={`/edit-product/${trip.id}`} className="btn btn-warning">
+                <Link to={`/edit-product/${trip._id}`} className="btn btn-warning">
                   Edit
                 </Link>
                 <button
-                  onClick={() => handleDelete(trip.id)}  // Gọi hàm xóa khi nhấn nút
+                  onClick={() => handleDelete(trip._id)} // Gọi hàm xóa khi nhấn nút
                   className="btn btn-danger"
                 >
                   Delete
